@@ -1,0 +1,47 @@
+[
+  {
+    "name": "Невалидная Организация 1",
+    "coordinates": {
+      "x": -500,
+      "y": 100.5
+    },
+    "annualTurnover": -1000000,
+    "employeesCount": 50,
+    "rating": 4.5,
+    "type": "COMMERCIAL",
+    "postalAddress": {
+      "street": "ул. Тестовая д.1",
+      "zipCode": "1234567"
+    }
+  },
+  {
+    "name": "",
+    "coordinates": {
+      "x": 100,
+      "y": 200.5
+    },
+    "annualTurnover": 1000000,
+    "employeesCount": -10,
+    "rating": 3.8,
+    "type": "PUBLIC",
+    "postalAddress": {
+      "street": "ул. Пустая",
+      "zipCode": "123"
+    }
+  },
+  {
+    "name": "Организация без типа",
+    "coordinates": {
+      "x": 150,
+      "y": 300.7
+    },
+    "annualTurnover": 2000000,
+    "employeesCount": 80,
+    "rating": 0,
+    "type": "INVALID_TYPE",
+    "postalAddress": {
+      "street": "ул. Проблемная д.99",
+      "zipCode": "9999999"
+    }
+  }
+]

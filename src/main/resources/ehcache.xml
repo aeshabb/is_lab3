@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.ehcache.org/v3"
+        xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.0.xsd">
+
+    <!--
+    Конфигурация Ehcache для L2 JPA Cache
+    
+    Параметры и их влияние на уровень хранения:
+    
+    1. heap (куча JVM):
+       - entries: максимальное количество объектов в heap
+       - Быстрый доступ, но потребляет память JVM
+       - Подходит для часто используемых данных
+    
+    2. offheap (вне кучи):
+       - Хранит данные вне JVM heap
+       - Медленнее чем heap, но не влияет на GC
+       - Подходит для больших объемов данных
+    
+    3. disk (диск):
+       - Персистентное хранение на диске
+       - Самый медленный, но неограниченный размер
+       - Данные сохраняются между перезапусками
+    
+    4. expiry (истечение):
+       - tti (time-to-idle): время неактивности до удаления
+       - ttl (time-to-live): максимальное время жизни записи
+       - Влияет на актуальность данных в кэше
+    -->
+
+    <!-- Шаблон кэша по умолчанию -->
+    <cache-template name="default">
+        <expiry>
+            <ttl unit="minutes">30</ttl>
+        </expiry>
+        <heap unit="entries">1000</heap>
+    </cache-template>
+
+    <!-- Кэш для сущности Organization -->
+    <cache alias="org.itmo.lab3.model.Organization" uses-template="default">
+        <expiry>
+            <ttl unit="minutes">60</ttl>
+        </expiry>
+        <heap unit="entries">500</heap>
+        <resources>
+            <heap unit="entries">500</heap>
+            <offheap unit="MB">10</offheap>
+        </resources>
+    </cache>
+
+    <!-- Кэш для сущности Address -->
+    <cache alias="org.itmo.lab3.model.Address" uses-template="default">
+        <expiry>
+            <ttl unit="minutes">60</ttl>
+        </expiry>
+        <heap unit="entries">300</heap>
+    </cache>
+
+    <!-- Кэш для сущности Coordinates -->
+    <cache alias="org.itmo.lab3.model.Coordinates" uses-template="default">
+        <expiry>
+            <ttl unit="minutes">60</ttl>
+        </expiry>
+        <heap unit="entries">300</heap>
+    </cache>
+
+    <!-- Кэш для сущности ImportHistory -->
+    <cache alias="org.itmo.lab3.model.ImportHistory" uses-template="default">
+        <expiry>
+            <ttl unit="minutes">15</ttl>
+        </expiry>
+        <heap unit="entries">200</heap>
+    </cache>
+
+    <!-- Стандартный кэш запросов Hibernate -->
+    <cache alias="default-query-results-region" uses-template="default">
+        <expiry>
+            <ttl unit="minutes">5</ttl>
+        </expiry>
+        <heap unit="entries">500</heap>
+    </cache>
+
+    <!-- Кэш для timestamps обновлений -->
+    <cache alias="default-update-timestamps-region" uses-template="default">
+        <expiry>
+            <none/>
+        </expiry>
+        <heap unit="entries">5000</heap>
+    </cache>
+
+</config>

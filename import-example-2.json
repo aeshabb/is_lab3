@@ -1,0 +1,55 @@
+[
+  {
+    "name": "ПАО Газпром Нефть",
+    "coordinates": {
+      "x": 250,
+      "y": 180.3
+    },
+    "officialAddress": {
+      "street": "пр. Литейный д.55",
+      "zipCode": "8881122"
+    },
+    "annualTurnover": 50000000,
+    "employeesCount": 250,
+    "rating": 4.9,
+    "type": "PUBLIC",
+    "postalAddress": {
+      "street": "ул. Невская д.10",
+      "zipCode": "9998877"
+    }
+  },
+  {
+    "name": "ООО Инновации Плюс",
+    "coordinates": {
+      "x": -120,
+      "y": 90.7
+    },
+    "annualTurnover": 3500000,
+    "employeesCount": 75,
+    "rating": 4.2,
+    "type": "COMMERCIAL",
+    "postalAddress": {
+      "street": "ул. Садовая д.33",
+      "zipCode": "5556666"
+    }
+  },
+  {
+    "name": "АО Техноресурс",
+    "coordinates": {
+      "x": 80,
+      "y": 250.1
+    },
+    "officialAddress": {
+      "street": "пр. Московский д.100",
+      "zipCode": "7778889"
+    },
+    "annualTurnover": 8000000,
+    "employeesCount": 150,
+    "rating": 4.6,
+    "type": "PUBLIC",
+    "postalAddress": {
+      "street": "ул. Заводская д.5",
+      "zipCode": "4443332"
+    }
+  }
+]

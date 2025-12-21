@@ -1,0 +1,55 @@
+[
+  {
+    "name": "АО Технологии Будущего",
+    "coordinates": {
+      "x": 150,
+      "y": 300.7
+    },
+    "annualTurnover": 5000000,
+    "employeesCount": 120,
+    "rating": 4.8,
+    "type": "PUBLIC",
+    "postalAddress": {
+      "street": "пр. Невский д.50",
+      "zipCode": "1112223"
+    }
+  },
+  {
+    "name": "ООО Рога и Копыта",
+    "coordinates": {
+      "x": 100,
+      "y": 200.5
+    },
+    "officialAddress": {
+      "street": "ул. Ленина д.1",
+      "zipCode": "1234567"
+    },
+    "annualTurnover": 1000000,
+    "employeesCount": 50,
+    "rating": 4.5,
+    "type": "COMMERCIAL",
+    "postalAddress": {
+      "street": "ул. Пушкина д.2",
+      "zipCode": "7654321"
+    }
+  },
+  {
+    "name": "ИП Петров",
+    "coordinates": {
+      "x": -200,
+      "y": 100.3
+    },
+    "officialAddress": {
+      "street": "ул. Гагарина д.15",
+      "zipCode": "9876543"
+    },
+    "annualTurnover": 500000,
+    "employeesCount": 5,
+    "rating": 3.9,
+    "type": "COMMERCIAL",
+    "postalAddress": {
+      "street": "ул. Строителей д.7",
+      "zipCode": "3334445"
+    }
+  }
+]
