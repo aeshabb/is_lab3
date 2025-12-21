@@ -14,9 +14,6 @@ import java.util.logging.Logger;
 
 /**
  * AOP Аспект для логирования статистики L2 JPA Cache.
- * 
- * Позволяет включать и отключать логирование cache hits и cache misses
- * через REST API эндпоинт.
  */
 @Aspect
 @Component
@@ -31,9 +28,6 @@ public class CacheStatisticsAspect {
     public CacheStatisticsAspect(EntityManagerFactory entityManagerFactory) {
         SessionFactory sessionFactory = entityManagerFactory.unwrap(SessionFactory.class);
         this.statistics = sessionFactory.getStatistics();
-        // By default statistics are enabled so that monitoring endpoints can read
-        // current values. enableLogging()/disableLogging() also toggle collection
-        // so callers can stop statistics accumulation when desired.
         this.statistics.setStatisticsEnabled(true);
     }
 
@@ -42,7 +36,6 @@ public class CacheStatisticsAspect {
      */
     public void enableLogging() {
         loggingEnabled.set(true);
-        // enable statistics collection when logging is enabled
         try {
             this.statistics.setStatisticsEnabled(true);
         } catch (Exception e) {
@@ -56,8 +49,6 @@ public class CacheStatisticsAspect {
      */
     public void disableLogging() {
         loggingEnabled.set(false);
-        // disable statistics collection when logging is disabled to stop
-        // counters from changing
         try {
             this.statistics.setStatisticsEnabled(false);
         } catch (Exception e) {

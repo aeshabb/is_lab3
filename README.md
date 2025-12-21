@@ -1,18 +1,9 @@
-# Инструкция по настройке лабораторной работы 3
-
 ## Доступ к приложению
 
 Подключение к серверу с прокидыванием порта:
 ```bash
 ssh -L 8080:localhost:23525 s408256@se.ifmo.ru
 ```
-
-Формат: `-L локальный_порт:хост:удаленный_порт`
-- **8080** - локальный порт на вашей машине
-- **23525** - порт WildFly на сервере se.ifmo.ru
-
-После запуска приложение доступно по адресу: **http://localhost:8080/lab3**
-
 ---
 
 ## Запуск JMeter тестов
@@ -22,36 +13,7 @@ ssh -L 8080:localhost:23525 s408256@se.ifmo.ru
 ```
 
 ---
-
-## 1. Установка MinIO на сервере se.ifmo.ru (FreeBSD, без Docker)
-
-**Важно**: MinIO не предоставляет готовые бинарники для FreeBSD. Бинарник уже скомпилирован и находится в директории `minio/` проекта.
-
-### Шаг 1: Загрузка бинарника на сервер
-
-```bash
-# Из директории проекта
-scp minio/minio-freebsd s408256@se.ifmo.ru:~/minio/minio
-```
-
-### Шаг 2: Настройка на сервере
-
-Подключаемся к серверу:
-```bash
-ssh s408256@se.ifmo.ru
-```
-
-Настраиваем MinIO:
-```bash
-# Создаем директории
-mkdir -p ~/minio ~/minio-data
-cd ~/minio
-
-# Делаем файл исполняемым (если скачивали бинарник)
-chmod +x minio
-```
-
-### Шаг 4: Настройка переменных окружения
+### Настройка переменных окружения
 
 ```bash
 # Устанавливаем учетные данные
@@ -59,47 +21,15 @@ export MINIO_ROOT_USER=minioadmin
 export MINIO_ROOT_PASSWORD=minioadmin
 ```
 
-### Шаг 5: Запуск MinIO
-
-```bash
-# Запуск MinIO на порту 9000
-cd ~/minio
-./minio server ~/minio-data --address ":9000" --console-address ":9001"
-```
+### Запуск MinIO
 
 Для запуска в фоновом режиме:
 
 ```bash
-nohup ./minio server ~/minio-data --address ":9000" --console-address ":9001" > minio.log 2>&1 &
+nohup ./minio server ~/minio-data --address ":23545" --console-address ":23546" > minio.log 2>&1 &
 ```
 
-### Шаг 6: Проверка работы
-
-На сервере:
-```bash
-# Проверка что процесс запущен
-ps aux | grep minio
-
-# Проверка доступности API
-curl http://localhost:9000/minio/health/live
-```
-
-### Шаг 7: Настройка приложения
-
-Файл `src/main/resources/minio.properties` уже настроен:
-
-```properties
-minio.endpoint=http://localhost:9000
-minio.accessKey=minioadmin
-minio.secretKey=minioadmin
-minio.bucket=import-files
-```
-
-MinIO работает на том же сервере, что и WildFly, поэтому используется localhost.
-
----
-
-## 2. Конфигурация Druid Connection Pool
+## 1. Конфигурация Druid Connection Pool
 
 ### Параметры пула соединений (JpaConfig.java):
 
@@ -127,7 +57,7 @@ MinIO работает на том же сервере, что и WildFly, по�
 
 ---
 
-## 3. Конфигурация L2 JPA Cache (Ehcache)
+## 2. Конфигурация L2 JPA Cache (Ehcache)
 
 ### Параметры Hibernate (JpaConfig.java):
 
@@ -156,25 +86,25 @@ MinIO работает на том же сервере, что и WildFly, по�
 
 ---
 
-## 4. Управление логированием кэша (AOP)
+## 3. Управление логированием кэша (AOP)
 
 ### REST API эндпоинты:
 
 ```bash
 # Включить логирование
-curl -X POST http://localhost:8080/lab3/api/cache/logging/enable
+curl -X POST http://localhost:23525/lab3/api/cache/logging/enable
 
 # Отключить логирование
-curl -X POST http://localhost:8080/lab3/api/cache/logging/disable
+curl -X POST http://localhost:23525/lab3/api/cache/logging/disable
 
 # Получить статус
-curl http://localhost:8080/lab3/api/cache/logging/status
+curl http://localhost:23525/lab3/api/cache/logging/status
 
 # Получить статистику
-curl http://localhost:8080/lab3/api/cache/statistics
+curl http://localhost:23525/lab3/api/cache/statistics
 
 # Сбросить статистику
-curl -X POST http://localhost:8080/lab3/api/cache/statistics/reset
+curl -X POST http://localhost:23525/lab3/api/cache/statistics/reset
 ```
 
 ### Формат статистики:
@@ -193,7 +123,7 @@ curl -X POST http://localhost:8080/lab3/api/cache/statistics/reset
 
 ---
 
-## 5. Распределенная транзакция (2PC)
+## 4. Распределенная транзакция (2PC)
 
 ### Алгоритм двухфазного коммита:
 
@@ -204,7 +134,7 @@ curl -X POST http://localhost:8080/lab3/api/cache/statistics/reset
 │   2. Получение objectName                                   │
 ├─────────────────────────────────────────────────────────────┤
 │                    ФАЗА 2: VALIDATE                         │
-│   3. Парсинг JSON                                          │
+│   3. Парсинг JSON                                           │
 │   4. Валидация данных                                       │
 ├─────────────────────────────────────────────────────────────┤
 │                    ФАЗА 3: COMMIT                           │
@@ -244,54 +174,3 @@ curl -X POST http://localhost:8080/lab3/api/cache/statistics/reset
 3. **Отказ MinIO во время параллельных запросов**:
    - Все запросы, не успевшие загрузить файл, завершаются с ошибкой
    - Никакие данные не записываются в БД
-
----
-
-## 6. Конфигурация standalone.xml (WildFly)
-
-В файле `standalone.xml` уже настроен datasource PostgreSQLDS с пулом соединений:
-
-```xml
-<datasource jndi-name="java:jboss/datasources/PostgreSQLDS" pool-name="PostgreSQLDS" enabled="true">
-    <connection-url>jdbc:postgresql://pg:5432/studs</connection-url>
-    <driver>postgresql</driver>
-    <pool>
-        <min-pool-size>5</min-pool-size>
-        <max-pool-size>20</max-pool-size>
-        <prefill>true</prefill>
-    </pool>
-    <security user-name="s408256" password="a3ag1NfP3rO3Gezo"/>
-</datasource>
-```
-
-**Важно**: Данные подключения в `JpaConfig.java` должны совпадать с `standalone.xml`:
-- URL: `jdbc:postgresql://pg:5432/studs`
-- User: `s408256`
-- Password: `a3ag1NfP3rO3Gezo`
-
----
-
-## 7. Сборка и деплой
-
-```bash
-# Сборка проекта
-mvn clean package
-
-# Деплой на WildFly (на сервере se.ifmo.ru)
-cp target/lab3.war $JBOSS_HOME/standalone/deployments/
-```
-
----
-
-## 8. Остановка сервисов после демонстрации
-
-```bash
-# Остановка MinIO
-pkill -f minio
-
-# Проверка что MinIO остановлен
-ps aux | grep minio
-
-# Остановка WildFly
-$JBOSS_HOME/bin/jboss-cli.sh --connect command=:shutdown
-```

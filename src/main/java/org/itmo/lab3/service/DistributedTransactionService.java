@@ -47,18 +47,14 @@ public class DistributedTransactionService {
     }
 
     /**
-     * Выполнить распределенный импорт с двухфазным коммитом.
-     * 
-     * @param file загруженный файл
-     * @param username имя пользователя
-     * @return результат импорта
+     * Выполнить распределенный импорт с двухфазным коммитом
      */
     public ImportResult executeDistributedImport(MultipartFile file, String username) {
         String objectName = null;
         TransactionPhase currentPhase = TransactionPhase.INIT;
         
         try {
-            // ===== ФАЗА 1: PREPARE - Загрузка файла в MinIO =====
+            // ФАЗА 1: PREPARE - Загрузка файла в MinIO
             currentPhase = TransactionPhase.PREPARE_MINIO;
             logger.info("[2PC] Phase 1: PREPARE - Uploading file to MinIO");
             
@@ -71,7 +67,7 @@ public class DistributedTransactionService {
             
             logger.info("[2PC] Phase 1: PREPARE - File uploaded: " + objectName);
             
-            // ===== ФАЗА 2: Парсинг и валидация JSON =====
+            // ФАЗА 2: Парсинг и валидация JSON
             currentPhase = TransactionPhase.VALIDATE;
             logger.info("[2PC] Phase 2: VALIDATE - Parsing JSON");
             
@@ -84,7 +80,7 @@ public class DistributedTransactionService {
                 throw new IllegalArgumentException("Файл не содержит организаций");
             }
             
-            // ===== ФАЗА 3: COMMIT - Сохранение данных в БД =====
+            // ФАЗА 3: COMMIT - Сохранение данных в БД
             currentPhase = TransactionPhase.COMMIT_DB;
             logger.info("[2PC] Phase 3: COMMIT - Saving data to database");
             
