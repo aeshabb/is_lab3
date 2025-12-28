@@ -95,7 +95,7 @@
               </elementProp>
               <elementProp name="rating" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">true</boolProp>
-                <stringProp name="Argument.value">4.5</stringProp>
+                <stringProp name="Argument.value">4.6</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
                 <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 <stringProp name="Argument.name">rating</stringProp>
@@ -188,7 +188,78 @@
         </HTTPSamplerProxy>
         <hashTree/>
       </hashTree>
-      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Concurrent Import - Same File (2PC Validation Test)" enabled="true">
+        <intProp name="ThreadGroup.num_threads">2</intProp>
+        <intProp name="ThreadGroup.ramp_time">1</intProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <stringProp name="LoopController.loops">1</stringProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </ThreadGroup>
+      <hashTree>
+      <SyncTimer guiclass="SyncTimerGui"
+           testclass="SyncTimer"
+           testname="Sync start import"
+           enabled="true">
+  <intProp name="groupSize">2</intProp>
+  <intProp name="timeoutInMs">0</intProp>
+</SyncTimer>
+<hashTree/>
+
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui"
+                  testclass="HTTPSamplerProxy"
+                  testname="Import organizations (multipart)"
+                  enabled="true">
+  
+  <stringProp name="HTTPSampler.domain">localhost</stringProp>
+  <stringProp name="HTTPSampler.port">8080</stringProp>
+  <stringProp name="HTTPSampler.protocol">http</stringProp>
+  <stringProp name="HTTPSampler.path">${CONTEXT_PATH}/import/upload</stringProp>
+  <stringProp name="HTTPSampler.method">POST</stringProp>
+
+  <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+
+  <elementProp name="HTTPsampler.Arguments"
+               elementType="Arguments"
+               guiclass="HTTPArgumentsPanel"
+               testclass="Arguments">
+    <collectionProp name="Arguments.arguments">
+      <elementProp name="username" elementType="HTTPArgument">
+        <boolProp name="HTTPArgument.always_encode">true</boolProp>
+        <boolProp name="HTTPArgument.use_equals">true</boolProp>
+        <stringProp name="Argument.name">username</stringProp>
+        <stringProp name="Argument.value">import-user-${__threadNum}</stringProp>
+        <stringProp name="Argument.metadata">=</stringProp>
+      </elementProp>
+    </collectionProp>
+  </elementProp>
+
+  <elementProp name="HTTPsampler.Files" elementType="HTTPFileArgs">
+  <collectionProp name="HTTPFileArgs.files">
+    <elementProp name="file" elementType="HTTPFileArg">
+      <stringProp name="File.path">/home/aeshabb/ITMO/IS/lab3/import-example.json</stringProp>
+      <stringProp name="File.paramname">file</stringProp>
+      <stringProp name="File.mimetype">application/json</stringProp>
+    </elementProp>
+  </collectionProp>
+</elementProp>
+
+
+  <stringProp name="HTTPSampler.follow_redirects">true</stringProp>
+  <stringProp name="HTTPSampler.auto_redirects">false</stringProp>
+  <stringProp name="HTTPSampler.use_keepalive">true</stringProp>
+  <stringProp name="HTTPSampler.DO_MULTIPART_POST">true</stringProp>
+  <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+  <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+  <stringProp name="HTTPSampler.response_timeout"></stringProp>
+
+</HTTPSamplerProxy>
+
+        <hashTree/>
+      </hashTree>
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
           <name>saveConfig</name>

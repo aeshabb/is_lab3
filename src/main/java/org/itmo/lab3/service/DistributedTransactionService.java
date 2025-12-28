@@ -12,23 +12,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Сервис для выполнения распределенной транзакции импорта с двухфазным коммитом.
- * 
- * Обеспечивает атомарность операций между:
- * 1. Сохранением файла в MinIO
- * 2. Импортом данных в БД
- * 
- * Реализация двухфазного коммита:
- * - Фаза PREPARE: подготовка ресурсов (загрузка файла в MinIO во "временном" режиме)
- * - Фаза COMMIT: фиксация изменений (сохранение данных в БД)
- * - Фаза ROLLBACK: откат при ошибке (удаление файла из MinIO)
- * 
- * Сценарии обработки отказов:
- * 1. Отказ MinIO (БД работает): транзакция откатывается, данные не сохраняются
- * 2. Отказ БД (MinIO работает): файл удаляется из MinIO, транзакция откатывается
- * 3. Ошибка в бизнес-логике: откат обоих ресурсов
- */
+
 @Service
 public class DistributedTransactionService {
 
@@ -67,9 +51,9 @@ public class DistributedTransactionService {
             
             logger.info("[2PC] Phase 1: PREPARE - File uploaded: " + objectName);
             
-            // ФАЗА 2: Парсинг и валидация JSON
+            // ФАЗА 1: Парсинг JSON
             currentPhase = TransactionPhase.VALIDATE;
-            logger.info("[2PC] Phase 2: VALIDATE - Parsing JSON");
+            logger.info("[2PC] Phase 1: Parsing JSON");
             
             List<OrganizationImportDto> organizations = objectMapper.readValue(
                 fileContent, 
@@ -80,9 +64,9 @@ public class DistributedTransactionService {
                 throw new IllegalArgumentException("Файл не содержит организаций");
             }
             
-            // ФАЗА 3: COMMIT - Сохранение данных в БД
+            // ФАЗА 2: COMMIT - Сохранение данных в БД
             currentPhase = TransactionPhase.COMMIT_DB;
-            logger.info("[2PC] Phase 3: COMMIT - Saving data to database");
+            logger.info("[2PC] Phase 2: COMMIT - Saving data to database");
             
             ImportHistory history = importService.importOrganizationsWithFile(
                 organizations, 
